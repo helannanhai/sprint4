@@ -40,6 +40,14 @@ app.use(swapRoute);
 app.get('/', (req, res) => {
   res.render('login', { title: 'Login', message: '' });
 });
+// ===== Register Page (GET) =====
+app.get('/register', (req, res) => {
+  res.render('register');
+});
+// ===== Register Page (GET) =====
+app.get('/index', (req, res) => {
+  res.render('index');
+});
 
 // ===== Login Handler (POST) =====
 app.post('/login', (req, res) => {
