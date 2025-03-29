@@ -1,0 +1,28 @@
+// Profile Modal
+#profileModal.modal
+  .modal-content
+    h2 Your Profile
+    img(src=user.image || '/path/to/default_image.jpg', alt="User Image", width="100", height="100")
+    p
+      strong Name:
+      | #{user.name}
+    p
+      strong Email:
+      | #{user.email}
+    p
+      strong Phone:
+      | #{user.phoneNumber}
+    p
+      strong Address:
+      | #{user.address}
+    p
+      strong Cart:
+      ul
+        each item in user.cart
+          li= item
+    p
+      strong Borrowed Items:
+      ul
+        each item in user.borrowedItems
+          li= item
+    button#closeProfileModal.btn.red(type="button") Close

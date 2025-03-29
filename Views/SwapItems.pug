@@ -1,0 +1,30 @@
+// Swap Items Modal
+#swapModal.modal
+  .modal-content
+    h2 Available Swap Items
+    table#swapTable(border="1")
+      thead
+        tr
+          th Item Name
+          th Category
+          th Color
+          th Condition
+          th Description
+          th Image
+          th Swapwith
+      tbody
+        each item in swapItems  // Loop through the data passed from the server
+          tr
+            td= item.itemName
+            td= item.category
+            td= item.color
+            td= item.condition
+            td= item.description
+            td
+              // Render image if it exists, otherwise show a placeholder or empty cell
+              if item.itemImage
+                img(src=item.itemImage, alt='Item Image', width="100", height="100")
+              else
+                p No Image Available
+            td= item.swapwith
+    button#closeSwapModal.btn.red(type="button") Close

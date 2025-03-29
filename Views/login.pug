@@ -1,0 +1,23 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title Login - Circular Fashion
+    link(rel="stylesheet", href="/style.css")
+  body
+    .login-container
+      h1 Login to Circular Fashion
+      form(action="/login", method="POST")
+        .form-group
+          label(for="email") Email:
+          input#email(type="email", name="username", required)
+        .form-group
+          label(for="password") Password:
+          input#password(type="password", name="password", required)
+        button(type="submit") Login
+
+      //  Add this section
+      .register-link
+        p Don't have an account?
+          a(href="/register") Register here

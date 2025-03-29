@@ -1,0 +1,245 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title Circular Fashion
+    link(rel="stylesheet", href="/style.css")
+  body
+    #mainPage.main-container
+      header
+        img.logo(src="./image/logo.png", alt="Circular Fashion Logo")
+        h1.title CIRCULAR-FASHION
+        nav
+          ul
+            li: a(href="#", id="reviewBtn") Review
+            li: a(href="#", id="contactBtn") Contact Us
+            li: a(href="#", id="reportBtn") Report
+            li: a(href="#", id="profileBtn") Profile
+
+            li
+              button#searchDonationBtn.btn.green(type="button") Search
+              // Search Form inside Modal
+              #searchDonationModal.modal
+                .modal-content
+                  h2 Search Donations
+                  form#searchDonationForm
+                    .form-group
+                      label(for="searchItemName") Enter Item Name:
+                      input#searchItemName(type="text", name="searchItemName", required)
+                    button(type="submit") Search
+                    button#closeSearchDonationModal.btn.red(type="button") Close
+      .main-container
+        .menu
+          button.btn.green#donateBtn DONATE
+          button.btn.green#borrowBtn BORROW
+          button.btn.green#swapBtn SWAP
+
+        .description
+          p.styled-text
+            b Elevate your style with Circular Fashion – 
+            | where fashion meets confidence. 
+            | Discover premium-quality, trendsetting apparel designed 
+            | for every occasion.
+
+        // Donation Modal
+        #donateModal.modal
+          .modal-content
+            h2 Donate an Item
+            form#donationForm(enctype="multipart/form-data", action="/donate", method="POST")
+              .form-group
+                label(for="donorName") Your Name:
+                input#donorName(type="text", name="donorName", required)
+              .form-group
+                label(for="itemCategory") Item Category:
+                select#itemCategory(name="itemCategory", required)
+                  option(value="clothes") Clothes
+                  option(value="shoes") Shoes
+                  option(value="accessories") Accessories
+                  option(value="bags") Bags
+              .form-group
+                label(for="itemColor") Color:
+                input#itemColor(type="text", name="itemColor", required)
+              .form-group
+                label(for="itemCondition") Condition:
+                select#itemCondition(name="itemCondition", required)
+                  option(value="new") New
+                  option(value="good") Good
+                  option(value="used") Used
+              .form-group
+                label(for="itemImage") Upload Image:
+                input#itemImage(type="file", name="itemImage", accept="image/*", required)
+              button(type="submit") Submit
+              button#closeDonateModal.btn.red(type="button") Close
+              
+
+        // Borrow Items Modal
+        #borrowModal.modal
+          .modal-content
+            h2 Available Donations
+            #donationList
+            button#closeBorrowModal.btn.red(type="button") Close
+
+        // Swap Items Modal
+        #swapModal.modal
+          .modal-content
+            h2 Available Swap Items
+            table#swapTable(border="1")
+              thead
+                tr
+                  th Item Name
+                  th Category
+                  th color 
+                  th Condition
+                  th Description
+              tbody
+            button#closeSwapModal.btn.red(type="button") Close
+
+        // Profile Modal
+        #profileModal.modal
+          .modal-content
+            h2 Your Profile
+            p Your profile details go here.
+            button#closeProfileModal.btn.red(type="button") Close
+
+        // Contact Us Modal
+        #contactModal.modal
+          .modal-content
+            h2 Contact Us
+            form#contactForm
+              .form-group
+                label(for="contactName") Your Name:
+                input#contactName(type="text", name="contactName", required)
+              .form-group
+                label(for="contactEmail") Your Email:
+                input#contactEmail(type="email", name="contactEmail", required)
+              .form-group
+                label(for="contactMessage") Your Message:
+                textarea#contactMessage(name="contactMessage", required)
+              button.btn.green(type="submit") Send Message
+            button#closeContactModal.btn.red(type="button") Close
+
+           
+
+        // Report Modal
+        #reportModal.modal
+          .modal-content
+            h2 Report an Issue
+            form#reportForm
+              .form-group
+                label(for="reportName") Your Name:
+                input#reportName(type="text", name="reportName", required)
+              .form-group
+                label(for="reportEmail") Your Email:
+                input#reportEmail(type="email", name="reportEmail", required)
+              .form-group
+                label(for="reportMessage") Describe the Issue:
+                textarea#reportMessage(name="reportMessage", required)
+              button.btn.green(type="submit") Submit Report
+            button#closeReportModal.btn.red(type="button") Close
+
+    script.
+      document.addEventListener("DOMContentLoaded", function() {
+          // Open and close modals
+          function setupModal(buttonId, modalId, closeBtnId) {
+              const button = document.getElementById(buttonId);
+              const modal = document.getElementById(modalId);
+              const closeButton = document.getElementById(closeBtnId);
+              
+              button.addEventListener("click", () => modal.style.display = "block");
+              closeButton.addEventListener("click", () => modal.style.display = "none");
+          }
+
+          setupModal("donateBtn", "donateModal", "closeDonateModal");
+          setupModal("borrowBtn", "borrowModal", "closeBorrowModal");
+          setupModal("swapBtn", "swapModal", "closeSwapModal");
+          setupModal("profileBtn", "profileModal", "closeProfileModal");
+          setupModal("contactBtn", "contactModal", "closeContactModal");
+          setupModal("reportBtn", "reportModal", "closeReportModal");
+          setupModal("searchDonationBtn", "searchDonationModal", "closeSearchDonationModal");
+
+          // Fetch donations dynamically
+          document.getElementById("borrowBtn").addEventListener("click", function () {
+              fetch("/donations")
+                  .then(response => response.json())
+                  .then(data => {
+                      const donationList = document.getElementById("donationList");
+                      donationList.innerHTML = "";
+                      if (data.length > 0) {
+                          data.forEach(donation => {
+                              const donationItem = document.createElement("div");
+                              donationItem.innerHTML = `
+                                  <p><b><strong>Donor:</strong> ${donation.donorName}</b></p>
+                                  <p><strong>Category:</strong> ${donation.itemCategory}</p>
+                                  <p><strong>Colour:</strong> ${donation.itemColor}</p>
+                                   <p><strong>Condition:</strong> ${donation.itemCondition}</p>
+                                  <p><strong>Image:</strong><br><img src="${donation.itemImage}" width="200"></p>
+                                
+                              `;
+                              donationList.appendChild(donationItem);
+                          });
+                      } else {
+                          donationList.innerHTML = "<p>No donations available.</p>";
+                      }
+                  })
+                  .catch(error => console.error("Error fetching donations:", error));
+          });
+          
+          // Search donations functionality
+          document.getElementById("searchDonationForm").addEventListener("submit", function (event) {
+              event.preventDefault();
+              const searchItemName = document.getElementById("searchItemName").value;
+
+              fetch(`/searchDonations?itemName=${searchItemName}`)
+                  .then(response => response.json())
+                  .then(data => {
+                      const donationList = document.getElementById("donationList");
+                      donationList.innerHTML = "";
+                      if (data.length > 0) {
+                          data.forEach(donation => {
+                              const donationItem = document.createElement("div");
+                              donationItem.innerHTML = `
+                                  <p><b><strong>Donor:</strong> ${donation.donorName}</b></p>
+                                  <p><strong>Category:</strong> ${donation.itemCategory}</p>
+                                  <p><strong>Colour:</strong> ${donation.itemColor}</p>
+                                  <p><strong>Condition:</strong> ${donation.itemCondition}</p>
+                                  <p><strong>Image:</strong><br><img src="${donation.itemImage}" width="200"></p>
+                              `;
+                              donationList.appendChild(donationItem);
+                          });
+                      } else {
+                          donationList.innerHTML = "<p>No items found matching your search.</p>";
+                      }
+                  })
+                  .catch(error => console.error("Error searching donations:", error));
+          });
+
+          // Fetch swap items dynamically
+          document.getElementById("swapBtn").addEventListener("click", function () {
+              fetch("/SwapItems")
+                  .then(response => response.json())
+                  .then(data => {
+                      const swapTableBody = document.querySelector("#swapTable tbody");
+                      swapTableBody.innerHTML = "";
+                      if (data.length > 0) {
+                          data.forEach(item => {
+                              const row = document.createElement("tr");
+                              row.innerHTML = `
+                                  <td><b>${item.itemName}</b></td>
+                                  <td>${item.category}</td>
+                                  <td>${item.color}</td>
+                                  <td>${item.condition}</td>
+                                  <td>${item.description}</td>
+                                  <td><img src="${item.itemImage}" alt="${item.itemName}" width="100"></td> <!-- Display image -->
+                                  <td>${item.swapwith}</td>
+                              `;
+                              swapTableBody.appendChild(row);
+                          });
+                      } else {
+                          swapTableBody.innerHTML = "<tr><td colspan='4'>No swap items available.</td></tr>";
+                      }
+                  })
+                  .catch(error => console.error("Error fetching swap items:", error));
+          });
+
+      });  

@@ -1,0 +1,28 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title #{title}
+    link(rel="stylesheet", href="/style.css") // Add your custom styles here
+  body
+    #mainPage.main-container
+      h1 #{title}
+      table(border="1")
+        thead
+          tr
+            th Item Name
+            th Category
+            th Description
+            th Image
+            th Added Date
+        tbody
+          each donation in donations
+            tr
+              td #{donation.item_name}
+              td #{donation.item_category}
+              td #{donation.item_description}
+
+                img(src=donation.item_image, alt=donation.item_name, width="700")
+              td #{donation.swap_status}
+              td #{donation.added_date}

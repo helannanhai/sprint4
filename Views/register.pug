@@ -1,0 +1,31 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title Register - Circular Fashion
+    link(rel="stylesheet", href="/style.css")
+  body
+    .register-container
+      h1 Register for Circular Fashion
+      form(action="/register", method="POST")
+        .form-group
+          label(for="fullname") Full Name:
+          input#fullname(type="text", name="fullname", required)
+
+        .form-group
+          label(for="email") Email:
+          input#email(type="email", name="email", required)
+
+        .form-group
+          label(for="username") Username:
+          input#username(type="text", name="username", required)
+
+        .form-group
+          label(for="password") Password:
+          input#password(type="password", name="password", required)
+
+        button(type="submit") Register
+
+      p
+        a(href="/") Already have an account? Login here
