@@ -1,155 +1,81 @@
+// =======================
+// app.js (Main Server File)
+// =======================
+
 const express = require('express');
 const path = require('path');
-require('dotenv').config();
-const db = require('./services/db'); // Importing database connection
+const dotenv = require('dotenv');
+const session = require('express-session');
+const db = require('./services/db');
+dotenv.config();
 
 const app = express();
 
-// Set Pug as the view engine
+// ===== View engine setup =====
 app.set('view engine', 'pug');
-app.set('views', path.join(__dirname, 'views')); 
+app.set('views', path.join(__dirname, 'views'));
 
-// Serve static files (CSS, images, JS)
+// ===== Middleware =====
 app.use(express.static(path.join(__dirname, 'static')));
-app.use(express.urlencoded({ extended: true })); // For form POST
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(session({
+  secret: 'circular-fashion-secret',
+  resave: false,
+  saveUninitialized: true
+}));
 
-// ===== Login Page =====
+// ===== Import modular routes =====
+const registerRoute = require('./backend/registerRoute');
+const userRoute = require('./backend/userRoute');
+const donationRoute = require('./backend/donationRoute');
+const swapRoute = require('./backend/swapRoute');
+
+app.use(registerRoute);
+app.use(userRoute);
+app.use(donationRoute);
+app.use(swapRoute);
+
+// ===== Login Page (GET) =====
 app.get('/', (req, res) => {
-  res.render('login', { title: 'login', message: 'Welcome to Loginpage!' });
+  res.render('login', { title: 'Login', message: '' });
 });
 
-// (You had a duplicate "/" route — keeping only login version)
+// ===== Login Handler (POST) =====
+app.post('/login', (req, res) => {
+  const { username, password } = req.body;
 
-// ===== Register Page =====
-app.get('/register', (req, res) => {
-  res.render('register'); // views/register.pug should exist
-});
-
-// ===== Register POST handler =====
-app.post('/register', (req, res) => {
-  const { fullname, email, username, password } = req.body;
-
-  const sql = `
-    INSERT INTO Users (Username, Password, FullName, Role, Email, LastLogin, CreatedAt)
-    VALUES (?, ?, ?, 'Customer', ?, NOW(), NOW())
-  `;
-
-  db.promise().query(sql, [username, password, fullname, email])
-    .then(() => {
-      res.redirect('/'); // Redirect to login after successful registration
-    })
-    .catch((err) => {
-      console.error('Registration failed:', err);
-      res.status(500).send('Registration error');
-    });
-});
-
-// ===== Users route =====
-app.get("/Users", function(req, res) {
-  const sql = 'SELECT * FROM Users';
-  db.query(sql).then(results => {
-      console.log(results);
-      res.send(results);
-  });
-});
-
-// Duplicate removed for Users route using db2 (inconsistent)
-
-// ===== Donations (raw output) =====
-app.get("/donations", function(req, res) {
-  const sql = 'SELECT * FROM donations';
-  db.query(sql).then(results => {
-      console.log(results);
-      res.send(results);
-  });
-});
-
-// ===== Donations (rendered) =====
-app.get("/donations", function (req, res) {
-  const sql = 'SELECT * FROM donations';
-
-  db.promise().query(sql)
-    .then(([donations_results]) => {
-      res.render('donations', { donations: donations_results });
-    })
-    .catch((err) => {
-      console.log('Error fetching donations:', err);
-      res.status(500).send('Error fetching donations');
-    });
-});
-
-// ===== Search Donations =====
-app.get("/searchDonations", (req, res) => {
-  const searchQuery = req.query.query;
-
-  const sql = `
-      SELECT * FROM donations 
-      WHERE donorName LIKE ? OR itemCategory LIKE ? OR itemColor LIKE ? OR itemCondition LIKE ?
-  `;
-
-  const searchParam = `%${searchQuery}%`;
-
-  db.promise()
-    .query(sql, [searchParam, searchParam, searchParam, searchParam])
+  const sql = 'SELECT * FROM Users WHERE Username = ? AND Password = ?';
+  db.promise().query(sql, [username, password])
     .then(([results]) => {
-        res.json(results);
+      if (results.length > 0) {
+        req.session.user = results[0];
+        res.redirect('/home');
+      } else {
+        res.render('login', { title: 'Login', message: 'Invalid credentials, please try again.' });
+      }
     })
     .catch((err) => {
-        console.error("Error searching donations:", err);
-        res.status(500).send("Error searching donations");
+      console.error('Login failed:', err);
+      res.status(500).send('Internal Server Error');
     });
 });
 
-// ===== User Profile by ID =====
-app.get("/profile/:userId", function (req, res) {
-  const userId = req.params.userId;
-
-  const sql = `SELECT * FROM users WHERE userId = ?`;
-
-  db.promise().query(sql, [userId])
-    .then(([userResults]) => {
-        if (userResults.length > 0) {
-            res.render('profile', { user: userResults[0] });
-        } else {
-            res.status(404).send('User not found');
-        }
-    })
-    .catch((err) => {
-        console.log('Error fetching user profile:', err);
-        res.status(500).send('Error fetching profile');
-    });
+// ===== Home Page (renders index.pug) =====
+app.get('/home', (req, res) => {
+  if (!req.session.user) {
+    return res.redirect('/');
+  }
+  res.render('index', { user: req.session.user });
 });
 
-// ===== Swap Items (raw output) =====
-app.get("/swapItems", function(req, res) {
-  const sql = 'SELECT * FROM SwapItems';
-  db.query(sql).then(results => {
-      console.log(results);
-      res.send(results);
-  });
-});
-
-// ===== Swap Items (rendered) =====
-app.get("/SwapItems", function (req, res) {
-  const sql = 'SELECT * FROM SwapItems';
-
-  db.promise().query(sql)
-    .then(([SwapItems_results]) => {
-      res.render('SwapItems', { SwapItems: SwapItems_results });
-    })
-    .catch((err) => {
-      console.log('Error fetching SwapItems:', err);
-      res.status(500).send('Error fetching SwapItems');
-    });
-});
-
-// ===== Error handling middleware =====
+// ===== Error Handling =====
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).send('Something went wrong!');
 });
 
-// ===== Start server =====
+// ===== Start Server =====
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running at http://127.0.0.1:${PORT}/`);
