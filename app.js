@@ -1,7 +1,3 @@
-// =======================
-// app.js (Main Server File)
-// =======================
-
 const express = require('express');
 const path = require('path');
 const dotenv = require('dotenv');
@@ -40,36 +36,18 @@ app.use(swapRoute);
 app.get('/', (req, res) => {
   res.render('login', { title: 'Login', message: '' });
 });
+
 // ===== Register Page (GET) =====
 app.get('/register', (req, res) => {
   res.render('register');
 });
-// ===== Register Page (GET) =====
+
+// ===== Index Page (GET) =====
 app.get('/index', (req, res) => {
   res.render('index');
 });
 
-// ===== Login Handler (POST) =====
-app.post('/login', (req, res) => {
-  const { username, password } = req.body;
-
-  const sql = 'SELECT * FROM Users WHERE Username = ? AND Password = ?';
-  db.promise().query(sql, [username, password])
-    .then(([results]) => {
-      if (results.length > 0) {
-        req.session.user = results[0];
-        res.redirect('/home');
-      } else {
-        res.render('login', { title: 'Login', message: 'Invalid credentials, please try again.' });
-      }
-    })
-    .catch((err) => {
-      console.error('Login failed:', err);
-      res.status(500).send('Internal Server Error');
-    });
-});
-
-// ===== Home Page (renders index.pug) =====
+// ===== Home Page =====
 app.get('/home', (req, res) => {
   if (!req.session.user) {
     return res.redirect('/');
