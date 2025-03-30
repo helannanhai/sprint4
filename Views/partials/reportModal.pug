@@ -1,0 +1,16 @@
+// Report Modal
+#reportModal.modal
+  .modal-content
+    h2 Report an Issue
+    form#reportForm
+      .form-group
+        label(for="reportName") Your Name:
+        input#reportName(type="text", name="reportName", required)
+      .form-group
+        label(for="reportEmail") Your Email:
+        input#reportEmail(type="email", name="reportEmail", required)
+      .form-group
+        label(for="reportMessage") Describe the Issue:
+        textarea#reportMessage(name="reportMessage", required)
+      button.btn.green(type="submit") Submit Report
+    button#closeReportModal.btn.red(type="button") Close

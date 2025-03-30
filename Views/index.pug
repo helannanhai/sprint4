@@ -96,11 +96,21 @@ html(lang="en")
             button#closeSwapModal.btn.red(type="button") Close
 
         // Profile Modal
-        #profileModal.modal
-          .modal-content
-            h2 Your Profile
-            p Your profile details go here.
-            button#closeProfileModal.btn.red(type="button") Close
+#profileModal.modal
+  .modal-content
+    h2 Your Profile
+    if user
+      p
+        strong Name: 
+        | #{user.FullName}
+      p
+        strong Email: 
+        | #{user.Email}
+      a.btn.red(href="/logout") Log Out
+    else
+      p You are not logged in.
+    button#closeProfileModal.btn.red(type="button") Close
+
 
         // Contact Us Modal
         #contactModal.modal

@@ -47,5 +47,15 @@ router.post('/login', async (req, res) => {
     res.status(500).send(`Detailed error: ${err.message}`);
   }
 });
+// Logout Route (GET)
+router.get('/logout', (req, res) => {
+  req.session.destroy(err => {
+    if (err) {
+      console.error('Logout error:', err);
+      return res.status(500).send('Could not log out.');
+    }
+    res.redirect('/');
+  });
+});
 
 module.exports = router;

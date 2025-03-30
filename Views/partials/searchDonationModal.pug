@@ -1,0 +1,10 @@
+// Search Form inside Modal
+#searchDonationModal.modal
+  .modal-content
+    h2 Search Donations
+    form#searchDonationForm
+      .form-group
+        label(for="searchItemName") Enter Item Name:
+        input#searchItemName(type="text", name="searchItemName", required)
+      button(type="submit") Search
+      button#closeSearchDonationModal.btn.red(type="button") Close

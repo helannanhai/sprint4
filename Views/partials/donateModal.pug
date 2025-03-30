@@ -1,0 +1,29 @@
+// Donation Modal
+#donateModal.modal
+  .modal-content
+    h2 Donate an Item
+    form#donationForm(enctype="multipart/form-data", action="/donate", method="POST")
+      .form-group
+        label(for="donorName") Your Name:
+        input#donorName(type="text", name="donorName", required)
+      .form-group
+        label(for="itemCategory") Item Category:
+        select#itemCategory(name="itemCategory", required)
+          option(value="clothes") Clothes
+          option(value="shoes") Shoes
+          option(value="accessories") Accessories
+          option(value="bags") Bags
+      .form-group
+        label(for="itemColor") Color:
+        input#itemColor(type="text", name="itemColor", required)
+      .form-group
+        label(for="itemCondition") Condition:
+        select#itemCondition(name="itemCondition", required)
+          option(value="new") New
+          option(value="good") Good
+          option(value="used") Used
+      .form-group
+        label(for="itemImage") Upload Image:
+        input#itemImage(type="file", name="itemImage", accept="image/*", required)
+      button(type="submit") Submit
+      button#closeDonateModal.btn.red(type="button") Close
