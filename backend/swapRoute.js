@@ -2,20 +2,26 @@ const express = require('express');
 const router = express.Router();
 const db = require('../services/db');
 
-// Raw swap items
-router.get('/swapItems', (req, res) => {
-  const sql = 'SELECT * FROM SwapItems';
-  db.promise().query(sql)
-    .then(([results]) => res.json(results))
-    .catch(err => res.status(500).send('Error fetching SwapItems'));
+// Raw swap items as JSON
+router.get('/swapItems', async (req, res) => {
+  try {
+    const [results] = await db.query('SELECT * FROM SwapItems');
+    res.json(results);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error fetching SwapItems');
+  }
 });
 
 // Rendered swap view
-router.get('/SwapItems', (req, res) => {
-  const sql = 'SELECT * FROM SwapItems';
-  db.promise().query(sql)
-    .then(([results]) => res.render('SwapItems', { SwapItems: results }))
-    .catch(err => res.status(500).send('Error rendering SwapItems'));
+router.get('/SwapItems', async (req, res) => {
+  try {
+    const [results] = await db.query('SELECT * FROM SwapItems');
+    res.render('SwapItems', { swapItems: results }); // ⚠️ Note: Use lowercase `swapItems` in Pug
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error rendering SwapItems');
+  }
 });
 
 module.exports = router;
