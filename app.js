@@ -21,6 +21,21 @@ app.use(session({
   saveUninitialized: true
 }));
 
+
+
+
+
+
+
+// Route for fetching swap items from the database
+app.get("/swapItems", function(req, res) {
+    // Assumes a table called test_table exists in your database
+    sql = 'select * from SwapItems';
+    db.query(sql).then(results => {
+        console.log(results);
+        res.send(results)
+    });
+});
 // ===== Import modular routes =====
 const registerRoute = require('./backend/registerRoute');
 const userRoute = require('./backend/userRoute');
@@ -54,6 +69,17 @@ app.get('/home', (req, res) => {
   }
   res.render('index', { user: req.session.user });
 });
+// Create a route for testing the db
+app.get("/donations", function(req, res) {
+    // Assumes a table called test_table exists in your database
+    sql = 'select * from donations';
+    db.query(sql).then(results => {
+        console.log(results);
+        res.send(results)
+    });
+});
+
+
 
 // ===== Error Handling =====
 app.use((err, req, res, next) => {

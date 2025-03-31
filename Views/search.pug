@@ -1,0 +1,31 @@
+doctype html
+html(lang="en")
+  head
+    title Search Results
+    link(rel="stylesheet", href="/style.css")
+  body
+    h1 Search Results for "#{query}"
+    if results.length
+      table(border="1")
+        thead
+          tr
+            th Donor
+            th Category
+            th Color
+            th Condition
+            th Image
+        tbody
+          each item in results
+            tr
+              td= item.donorName
+              td= item.itemCategory
+              td= item.itemColor
+              td= item.itemCondition
+              td
+                if item.itemImage
+                  img(src=item.itemImage, width="100")
+                else
+                  | No image
+    else
+      p No results found.
+    a(href="/home") Back to Home

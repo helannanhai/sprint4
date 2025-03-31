@@ -342,3 +342,18 @@ nav ul li a {
 .register-container p a:hover {
     text-decoration: underline;
 }
+.profile-circle {
+    background-color: #4CAF50;
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+  }
+  
